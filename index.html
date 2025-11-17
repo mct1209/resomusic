@@ -6,367 +6,212 @@
   <title>全球療癒音樂播放器 | Global Healing Player</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0f0f1a;
-      --card: #1a1a2e;
-      --accent: #7b68ee;
-      --text: #e0e7ff;
-      --text-muted: #a0a8c0;
-      --border: #333355;
-      --success: #a8e6cf;
-      --error: #ff6b6b;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Sans TC', 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #0f0f1a 0%, #16213e 100%);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    .container { max-width: 900px; margin: 0 auto; display: grid; gap: 20px; grid-template-columns: 1fr; }
-    @media (min-width: 768px) { .container { grid-template-columns: 1fr 1fr; } }
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      border: 1px solid var(--border);
-    }
-    h1 { text-align: center; font-size: 2rem; margin-bottom: 10px; color: #c3b1e1; text-shadow: 0 0 15px rgba(123, 104, 238, 0.5); }
-    .subtitle { text-align: center; color: var(--text-muted); font-size: 1rem; margin-bottom: 20px; }
-    .lang-switch { text-align: center; margin-bottom: 20px; }
-    .lang-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 6px 12px; margin: 0 4px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; }
-    .lang-btn.active, .lang-btn:hover { background: var(--accent); color: white; }
-    .control-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: 500; color: #d0d8ff; }
-    select, input[type="text"], input[type="range"], input[type="file"] { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #16213e; color: var(--text); font-size: 1rem; }
-    input[type="range"] { height: 8px; -webkit-appearance: none; background: #333; outline: none; border-radius: 4px; }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; cursor: pointer; }
-    .volume-display { text-align: right; font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
-    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-    .btn { background: linear-gradient(45deg, #7b68ee, #5e35b1); color: white; border: none; padding: 14px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: transform 0.2s; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn.stop { background: linear-gradient(45deg, #e91e63, #c2185b); }
-    .status { text-align: center; margin-top: 10px; font-size: 0.9rem; }
-    .status.success { color: var(--success); }
-    .status.error { color: var(--error); }
-    footer { text-align: center; margin-top: 30px; color: var(--text-muted); font-size: 0.9rem; }
-    @media (max-width: 480px) { .card { padding: 16px; } h1 { font-size: 1.6rem; } }
-    .station-list { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: #16213e; }
-    .station-item { padding: 8px; border-bottom: 1px solid var(--border); cursor: pointer; }
-    .station-item:hover { background: #2a2a4a; }
-    .station-item:last-child { border-bottom: none; }
+    :root{--bg:#0f0f1a;--card:#1a1a2e;--accent:#8b5cf6;--text:#e0e7ff;--muted:#94a3b8;--success:#86efac;--error:#fca5a5}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Sans TC','Roboto',sans-serif;background:linear-gradient(135deg,#0f0f1a,#1e1b4b);color:var(--text);min-height:100vh;padding:20px}
+    .container{max-width:960px;margin:0 auto;display:grid;gap:20px;grid-template-columns:1fr}
+    @media(min-width:768px){.container{grid-template-columns:1fr 1fr}}
+    .card{background:var(--card);border-radius:20px;padding:24px;box-shadow:0 15px 35px rgba(0,0,0,.4);border:1px solid #333}
+    h1{font-size:2.2rem;text-align:center;margin-bottom:8px;color:#ddd6fe;text-shadow:0 0 20px #8b5cf6}
+    .subtitle{text-align:center;color:var(--muted);margin-bottom:20px}
+    .lang-switch{text-align:center;margin-bottom:20px}
+    .lang-btn{background:none;border:1px solid var(--accent);color:var(--accent);padding:8px 16px;margin:0 6px;border-radius:12px;cursor:pointer;transition:.3s}
+    .lang-btn.active,.lang-btn:hover{background:var(--accent);color:#fff}
+    label{display:block;margin:16px 0 8px;font-weight:600;color:#d0d8ff}
+    select,input[type=range],input[type=text],input[type=file]{width:100%;padding:14px;border-radius:12px;background:#16213e;border:1px solid #334;color:#fff;font-size:1rem}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:var(--accent);border-radius:50%;cursor:pointer}
+    .btn{display:block;width:100%;padding:16px;margin:12px 0;border:none;border-radius:12px;font-weight:700;color:#fff;cursor:pointer;transition:.2s}
+    .play{background:linear-gradient(45deg,#8b5cf6,#ec4899)}
+    .stop{background:linear-gradient(45deg,#ef4444,#dc2626)}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(139,92,246,.4)}
+    .status{text-align:center;margin-top:12px;font-weight:600}
+    .success{color:var(--success)}
+    .error{color:var(--error)}
+    footer{text-align:center;margin-top:40px;color:var(--muted);font-size:0.9rem}
+    .preset{max-height:200px;overflow-y:auto;border:1px solid #444;border-radius:12px;padding:10px;background:#16213e}
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="card" style="grid-column: 1 / -1;">
-      <h1 data-lang="title">全球療癒音樂播放器</h1>
-      <p class="subtitle" data-lang="subtitle">Solfeggio & Schumann + 100個全球電台 + 本地音樂</p>
-      <div class="lang-switch">
-        <button class="lang-btn active" data-lang="zh">中文</button>
-        <button class="lang-btn" data-lang="en">English</button>
-        <button class="lang-btn" data-lang="ja">日本語</button>
-      </div>
-    </div>
-
-    <!-- 背景療癒音 -->
-    <div class="card">
-      <h3 data-lang="bg-title">背景療癒音</h3>
-      <div class="control-group">
-        <label data-lang="bg-select">選擇組合</label>
-        <select id="bgCombo">
-          <option value="528-7.83" selected disabled>528 Hz + 7.83 Hz (吸引財富)</option>
-        </select>
-      </div>
-      <div class="control-group">
-        <label data-lang="bg-volume">背景音量 <span id="bgVolVal">10%</span></label>
-        <input type="range" id="bgVolume" min="0" max="100" value="10" step="1">
-      </div>
-      <div class="btn-group">
-        <button class="btn" id="bgPlay" data-lang="play-bg">播放</button>
-        <button class="btn stop" id="bgStop" data-lang="stop-bg">停止</button>
-      </div>
-      <p class="status" id="bgStatus"></p>
-    </div>
-
-    <!-- 主音樂播放器 -->
-    <div class="card">
-      <h3 data-lang="main-title">主音樂播放器</h3>
-
-      <div class="control-group">
-        <label data-lang="radio-preset">100個全球電台（點選即播）</label>
-        <select id="radioPreset" style="font-size: 0.9rem;">
-          <option value="">自訂 URL</option>
-          <option value="https://icecast.radiofrance.fr/franceinter-lofi.mp3">France Inter Lo-Fi (法國放鬆)</option>
-          <option value="https://stream.zeno.fm/9b0k7v8p7zquv">Zen Radio (全球冥想)</option>
-          <option value="https://streamer.radio.co/s3d1b8a7a9/listen">ICRT FM100 台北 (台灣)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_SLEEP.mp3">Calm Radio Sleep (加拿大睡眠)</option>
-          <option value="https://stream.rcs.revma.com/ye5kqhntx6quv">Smooth Jazz 24/7 (美國爵士)</option>
-          <option value="http://stream.radioparadise.com/mp3-320">Radio Paradise (美國混音)</option>
-          <option value="https://ice1.somafm.com/dronezone-128-mp3">SomaFM Drone Zone (美國環境)</option>
-          <option value="https://ice1.somafm.com/lush-128-mp3">SomaFM Lush (美國放鬆)</option>
-          <option value="https://ice1.somafm.com/deepspaceone-128-mp3">SomaFM Deep Space (美國太空)</option>
-          <option value="https://ice1.somafm.com/spacestation-s1-128-mp3">SomaFM Space Station (美國太空)</option>
-          <option value="https://ice1.somafm.com/groovesalad-128-mp3">SomaFM Groove Salad (美國 groove)</option>
-          <option value="https://ice1.somafm.com/secretsauce-128-mp3">SomaFM Secret Sauce (美國混音)</option>
-          <option value="https://ice1.somafm.com/woodentoaster-128-mp3">SomaFM Wooden Toaster (美國電子)</option>
-          <option value="https://ice1.somafm.com/fluid-128-mp3">SomaFM Fluid (美國流動)</option>
-          <option value="https://ice1.somafm.com/suburbsgoa-128-mp3">SomaFM Suburbs of Goa (美國印度)</option>
-          <option value="https://stream.srg-ssr.ch/m/rsc/aacp_96">Radio Swiss Classic (瑞士古典)</option>
-          <option value="https://stream.srg-ssr.ch/m/rsj/aacp_96">Radio Swiss Jazz (瑞士爵士)</option>
-          <option value="https://stream.srg-ssr.ch/m/rsp/aacp_96">Radio Swiss Pop (瑞士流行)</option>
-          <option value="https://stream.srg-ssr.ch/m/rsc/mp3_128">Radio Swiss Classic HD (瑞士古典)</option>
-          <option value="https://icecast.radiofrance.fr/francemusique-hifi.mp3">France Musique (法國古典)</option>
-          <option value="https://icecast.radiofrance.fr/franceculture-hifi.mp3">France Culture (法國文化)</option>
-          <option value="https://icecast.radiofrance.fr/franceinter-hifi.mp3">France Inter (法國綜合)</option>
-          <option value="https://icecast.radiofrance.fr/fip-hifi.mp3">FIP Radio (法國混音)</option>
-          <option value="https://icecast.radiofrance.fr/franceinfo-hifi.mp3">France Info (法國新聞)</option>
-          <option value="https://dradio-de-dlf-core-01-media.srcxstream.akamaized.net/content/dlfradio/0/0/1/001/001/0/0/100100100100100.mp3">Deutschlandfunk (德國新聞)</option>
-          <option value="https://wdr-wdr2-lb.akamaized.net/content/rbb/wdr2/0/0/1/001/001/0/0/100100100100100.mp3">WDR 2 (德國流行)</option>
-          <option value="https://nhkwlive-ssl.akamaized.net/hls/live/2001559/nhkwlive-dvr/playlist.m3u8">NHK World Japan (日本國際)</option>
-          <option value="https://abc.net.au/radio/listen/live/radionational.mp3">ABC Radio National (澳洲新聞)</option>
-          <option value="https://abc.net.au/radio/listen/live/radioclassic.mp3">ABC Classic (澳洲古典)</option>
-          <option value="https://live-radio-01.mediahubaustralia.com/2SRNMP3">Triple J (澳洲青年)</option>
-          <option value="https://cbc_r1.akacast.akamaistream.net/7/364/364917/v1/rc.akacast.akamaistream.net/cbc_r1">CBC Radio 1 (加拿大綜合)</option>
-          <option value="https://wqxr-mp3-128.streamguys1.com/wqxr.mp3">WQXR New York (紐約古典)</option>
-          <option value="https://kusc.streamguys1.com/kusc24">KUSC Classical (洛杉磯古典)</option>
-          <option value="https://wfmt-mp3-128.streamguys1.com/wfmt.mp3">WFMT Chicago (芝加哥古典)</option>
-          <option value="https://kingfm-mp3-128.streamguys1.com/kingfm.mp3">King FM Seattle (西雅圖古典)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_PIANO.mp3">Calm Radio Piano (鋼琴)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_GUITAR.mp3">Calm Radio Guitar (吉他)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_FLUTE.mp3">Calm Radio Flute (長笛)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_HARP.mp3">Calm Radio Harp (豎琴)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_NATIVE_AMERICAN.mp3">Calm Radio Native American (原住民)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_CELTIC.mp3">Calm Radio Celtic (凱爾特)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_SPA.mp3">Calm Radio Spa (水療)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_OCEAN.mp3">Calm Radio Ocean (海洋)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_FOREST.mp3">Calm Radio Forest (森林)</option>
-          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_RAIN.mp3">Calm Radio Rain (雨聲)</option>
-          <option value="https://radioart.com/valentine.m3u">Radio Art Valentine (浪漫)</option>
-          <option value="https://radioart.com/meditation.m3u">Radio Art Meditation (冥想)</option>
-          <option value="https://radioart.com/relaxation.m3u">Radio Art Relaxation (放鬆)</option>
-          <option value="https://radioart.com/sleep.m3u">Radio Art Sleep (睡眠)</option>
-          <option value="https://radioart.com/yoga.m3u">Radio Art Yoga (瑜伽)</option>
-          <option value="https://radioart.com/nature.m3u">Radio Art Nature (自然)</option>
-          <option value="https://radioart.com/chillout.m3u">Radio Art Chillout (舒緩)</option>
-          <option value="https://radioart.com/ambient.m3u">Radio Art Ambient (環境)</option>
-          <option value="https://radioart.com/lounge.m3u">Radio Art Lounge (輕音樂)</option>
-          <option value="https://radioart.com/jazz.m3u">Radio Art Jazz (爵士)</option>
-          <option value="https://ice1.somafm.com/dronezone-128-mp3">SomaFM Drone Zone (環境)</option>
-          <option value="https://ice1.somafm.com/lush-128-mp3">SomaFM Lush (放鬆)</option>
-          <option value="https://ice1.somafm.com/deepspaceone-128-mp3">SomaFM Deep Space (太空)</option>
-          <option value="https://ice1.somafm.com/spacestation-s1-128-mp3">SomaFM Space Station (太空)</option>
-          <option value="https://ice1.somafm.com/groovesalad-128-mp3">SomaFM Groove Salad (groove)</option>
-          <option value="https://ice1.somafm.com/secretsauce-128-mp3">SomaFM Secret Sauce (混音)</option>
-          <option value="https://ice1.somafm.com/woodentoaster-128-mp3">SomaFM Wooden Toaster (電子)</option>
-          <option value="https://ice1.somafm.com/fluid-128-mp3">SomaFM Fluid (流動)</option>
-          <option value="https://ice1.somafm.com/suburbsgoa-128-mp3">SomaFM Suburbs of Goa (印度)</option>
-          <option value="https://ice1.somafm.com/cliq-128-mp3">SomaFM CLIQ (電子)</option>
-        </select>
-      </div>
-
-      <div class="control-group">
-        <label>自訂電台 URL（.mp3/.aac/.m3u8）</label>
-        <input type="text" id="customUrl" placeholder="貼上串流網址">
-      </div>
-
-      <div class="control-group">
-        <label>主音量 <span id="mainVolVal">80%</span></label>
-        <input type="range" id="mainVolume" min="0" max="100" value="80">
-      </div>
-
-      <div class="btn-group">
-        <button class="btn" id="radioPlay">播放電台</button>
-        <button class="btn stop" id="radioStop">停止電台</button>
-      </div>
-
-      <div class="control-group" style="margin-top: 20px;">
-        <label>或上傳本地音樂</label>
-        <input type="file" id="localFile" accept="audio/*">
-      </div>
-      <div class="btn-group">
-        <button class="btn" id="localPlay">播放本地音樂</button>
-        <button class="btn stop" id="localStop">停止</button>
-      </div>
-
-      <p class="status" id="mainStatus">準備就緒</p>
+<div class="container">
+  <div class="card" style="grid-column:1/-1">
+    <h1 data-lang="title">全球療癒音樂播放器</h1>
+    <p class="subtitle" data-lang="subtitle">528Hz＋舒曼波背景音 • 全球電台 • 本地音樂</p>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="ja">日本語</button>
     </div>
   </div>
 
-  <footer>
-    <p>© 2025 Global Healing Player | <span>開源免費 • GitHub</span></p>
-  </footer>
+  <!-- 背景音 -->
+  <div class="card">
+    <h3 data-lang="bg-title">背景療癒音（528Hz + 7.83Hz）</h3>
+    <label data-lang="bg-volume">背景音量 <span id="bgVolVal">15%</span></label>
+    <input type="range" id="bgVolume" min="0" max="100" value="15">
+    <button class="btn play" id="bgPlay" data-lang="play-bg">播放背景音</button>
+    <button class="btn stop" id="bgStop" data-lang="stop-bg">停止背景音</button>
+    <div class="status" id="bgStatus"></div>
+  </div>
 
-  <script>
-    // 多語系
-    const translations = {
-      zh: {
-        title: "全球療癒音樂播放器", subtitle: "Solfeggio & Schumann + 100個全球電台 + 本地音樂",
-        "bg-title": "背景療癒音", "bg-select": "選擇組合", "bg-volume": "背景音量",
-        "play-bg": "播放", "stop-bg": "停止",
-        "main-title": "主音樂播放器", "radio-preset": "100個全球電台（點選即播）", "radio-url": "自訂電台 URL", "main-volume": "主音量",
-        "play-radio": "播放電台", "stop-radio": "停止電台", or: "或上傳本地音樂",
-        "play-local": "播放本地音樂", "stop-local": "停止"
-      },
-      en: {
-        title: "Global Healing Music Player", subtitle: "Solfeggio & Schumann + 100 Global Stations + Local Music",
-        "bg-title": "Background Healing", "bg-select": "Select Combo", "bg-volume": "Volume",
-        "play-bg": "Play", "stop-bg": "Stop",
-        "main-title": "Main Player", "radio-preset": "100 Global Stations (Click to Play)", "radio-url": "Custom URL", "main-volume": "Volume",
-        "play-radio": "Play Radio", "stop-radio": "Stop Radio", or: "or Upload Local Music",
-        "play-local": "Play Local", "stop-local": "Stop"
-      },
-      ja: {
-        title: "グローバル癒し音楽プレーヤー", subtitle: "ソルフェジオ & シューマン + 100のグローバル局 + ローカル音楽",
-        "bg-title": "背景ヒーリング", "bg-select": "組み合わせを選択", "bg-volume": "音量",
-        "play-bg": "再生", "stop-bg": "停止",
-        "main-title": "メインプレーヤー", "radio-preset": "100のグローバル局 (クリックで再生)", "radio-url": "カスタムURL", "main-volume": "音量",
-        "play-radio": "ラジオ再生", "stop-radio": "ラジオ停止", or: "またはローカル音楽をアップロード",
-        "play-local": "ローカル再生", "stop-local": "停止"
-      }
-    };
+  <!-- 主播放器 -->
+  <div class="card">
+    <h3 data-lang="main-title">主音樂播放器</h3>
 
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        applyLang(btn.dataset.lang);
-      });
+    <label data-lang="preset">熱門療癒電台（點選即播）</label>
+    <select id="preset" class="preset">
+      <option value="https://icecast.radiofrance.fr/franceinter-lofi.mp3">France Inter Lo-Fi（法國放鬆）</option>
+      <option value="https://stream.zeno.fm/9b0k7v8p7zquv">Zen Radio（全球冥想）</option>
+      <option value="https://streamer.radio.co/s3d1b8a7a9/listen">ICRT FM100 台北</option>
+      <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/CALM_RADIO_SLEEP.mp3">Calm Radio Sleep</option>
+      <option value="https://stream.rcs.revma.com/ye5kqhntx6quv">Smooth Jazz 24/7</option>
+      <option value="https://ice1.somafm.com/dronezone-128-mp3">SomaFM Drone Zone（環境音）</option>
+      <option value="https://ice1.somafm.com/groovesalad-128-mp3">SomaFM Groove Salad</option>
+      <option value="https://ice1.somafm.com/lush-128-mp3">SomaFM Lush（極放鬆）</option>
+    </select>
+
+    <label data-lang="custom">自訂電台 URL</label>
+    <input type="text" id="customUrl" placeholder="可貼上任何 .mp3 / .m3u8 串流">
+
+    <label data-lang="main-volume">主音量 <span id="mainVolVal">80%</span></label>
+    <input type="range" id="mainVolume" min="0" max="100" value="80">
+
+    <button class="btn play" id="radioPlay" data-lang="play-radio">播放電台</button>
+    <button class="btn stop" id="radioStop" data-lang="stop-radio">停止電台</button>
+
+    <hr style="margin:20px 0;border:none;border-top:1px solid #444">
+
+    <label data-lang="local">或播放本地音樂</label>
+    <input type="file" id="localFile" accept="audio/*">
+    <button class="btn play" id="localPlay" data-lang="play-local">播放本地音樂</button>
+    <button class="btn stop" id="localStop" data-lang="stop-local">停止</button>
+
+    <div class="status success" id="mainStatus" data-lang="ready">準備就緒</div>
+  </div>
+</div>
+
+<footer>© 2025 Global Healing Player｜100% 開源・免費・無廣告</footer>
+
+<script>
+  // === 多語系 ===
+  const lang = {
+    zh: {title:"全球療癒音樂播放器",subtitle:"528Hz＋舒曼波背景音 • 全球電台 • 本地音樂", "bg-title":"背景療癒音（528Hz + 7.83Hz）",
+         "bg-volume":"背景音量","play-bg":"播放背景音","stop-bg":"停止背景音",
+         "main-title":"主音樂播放器","preset":"熱門療癒電台（點選即播）","custom":"自訂電台 URL","main-volume":"主音量",
+         "play-radio":"播放電台","stop-radio":"停止電台","local":"或播放本地音樂","play-local":"播放本地音樂","stop-local":"停止","ready":"準備就緒"},
+    en: {title:"Global Healing Player",subtitle:"528Hz + Schumann • Global Radio • Local Music", "bg-title":"Background Healing Tone (528Hz + 7.83Hz)",
+         "bg-volume":"Background Volume","play-bg":"Play Background","stop-bg":"Stop Background",
+         "main-title":"Main Player","preset":"Popular Healing Stations","custom":"Custom Radio URL","main-volume":"Main Volume",
+         "play-radio":"Play Radio","stop-radio":"Stop Radio","local":"or Play Local Music","play-local":"Play Local","stop-local":"Stop","ready":"Ready"},
+    ja: {title:"グローバル癒しプレーヤー",subtitle:"528Hz＋シューマン波 • 世界のラジオ • ローカル音楽", "bg-title":"背景ヒーリング音（528Hz + 7.83Hz）",
+         "bg-volume":"背景音量","play-bg":"背景音再生","stop-bg":"背景音停止",
+         "main-title":"メインプレーヤー","preset":"人気癒しラジオ","custom":"カスタムURL","main-volume":"音量",
+         "play-radio":"ラジオ再生","stop-radio":"ラジオ停止","local":"またはローカル音楽","play-local":"ローカル再生","stop-local":"停止","ready":"準備完了"}
+  };
+
+  document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const l = lang[b.dataset.lang];
+    document.querySelectorAll('[data-lang]').forEach(el=>{
+      const key = el.dataset.lang;
+      if(l[key]) el.textContent = l[key];
     });
+  }));
 
-    function applyLang(lang) {
-      const dict = translations[lang];
-      document.querySelectorAll('[data-lang]').forEach(el => {
-        const key = el.dataset.lang;
-        if (dict[key]) el.textContent = dict[key];
-      });
+  // === Audio Context + 原生 audio ===
+  let ctx, bgSource, bgGain;
+  const bgAudio = new Audio();
+  const mainAudio = new Audio();
+
+  async function unlock() {
+    if(!ctx){
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      bgGain = ctx.createGain();
+      bgGain.connect(ctx.destination);
     }
+    if(ctx.state==='suspended') await ctx.resume();
+  }
+  document.addEventListener('touchstart',unlock,{once:true});
+  document.addEventListener('click',unlock,{once:true});
 
-    // === Audio Context ===
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let ctx, bgSource, bgGain, mainAudio, mainGain;
+  // === 背景音（528 + 7.83）===
+  document.getElementById('bgVolume').addEventListener('input',e=>{
+    document.getElementById('bgVolVal').textContent = e.target.value+'%';
+    if(bgGain) bgGain.gain.value = e.target.value/100 * 0.4;
+  });
 
-    async function initAudio() {
-      if (!ctx) {
-        ctx = new AudioContext();
-        bgGain = ctx.createGain();
-        mainGain = ctx.createGain();
-        bgGain.connect(ctx.destination);
-        mainGain.connect(ctx.destination);
-      }
-      if (ctx.state === 'suspended') await ctx.resume();
+  document.getElementById('bgPlay').onclick = async () => {
+    await unlock();
+    if(bgSource) bgSource.stop();
+
+    const duration = 600;
+    const buffer = ctx.createBuffer(2, ctx.sampleRate*duration, ctx.sampleRate);
+    const left = buffer.getChannelData(0);
+    const right = buffer.getChannelData(1);
+    for(let i=0;i<buffer.length;i++){
+      const t = i/ctx.sampleRate;
+      left[i]  = Math.sin(2*Math.PI*528*t)*0.1;
+      right[i] = Math.sin(2*Math.PI*7.83*t)*0.1;
     }
+    bgSource = ctx.createBufferSource();
+    bgSource.buffer = buffer;
+    bgSource.loop = true;
+    bgSource.connect(bgGain);
+    bgSource.start();
+    document.getElementById('bgStatus').textContent = '528Hz + 7.83Hz 播放中';
+    document.getElementById('bgStatus').className = 'status success';
+  };
 
-    // === 背景音 ===
-    const bgCombo = document.getElementById('bgCombo');
-    const bgVolume = document.getElementById('bgVolume');
-    const bgVolVal = document.getElementById('bgVolVal');
-    const bgPlay = document.getElementById('bgPlay');
-    const bgStop = document.getElementById('bgStop');
-    const bgStatus = document.getElementById('bgStatus');
+  document.getElementById('bgStop').onclick = () => {
+    if(bgSource){bgSource.stop();bgSource=null;}
+    document.getElementById('bgStatus').textContent = '已停止';
+    document.getElementById('bgStatus').className = 'status';
+  };
 
-    bgVolume.addEventListener('input', e => {
-      bgVolVal.textContent = e.target.value + '%';
-      if (bgGain) bgGain.gain.value = e.target.value / 100 * 0.4;
-    });
+  // === 主音量 ===
+  document.getElementById('mainVolume').addEventListener('input',e=>{
+    document.getElementById('mainVolVal').textContent = e.target.value+'%';
+    mainAudio.volume = e.target.value/100;
+  });
 
-    bgPlay.addEventListener('click', async () => {
-      await initAudio();
-      stopBg();
-      const [sol, sch] = bgCombo.value.split('-').map(Number);
-      const duration = 600;
-      const buffer = ctx.createBuffer(2, ctx.sampleRate * duration, ctx.sampleRate);
-      const left = buffer.getChannelData(0);
-      const right = buffer.getChannelData(1);
-      for (let i = 0; i < buffer.length; i++) {
-        left[i] = Math.sin(2 * Math.PI * sol * i / ctx.sampleRate) * 0.08;
-        right[i] = Math.sin(2 * Math.PI * (sol + sch) * i / ctx.sampleRate) * 0.08;
-      }
-      bgSource = ctx.createBufferSource();
-      bgSource.buffer = buffer;
-      bgSource.loop = true;
-      bgSource.connect(bgGain);
-      bgSource.start();
-      bgStatus.textContent = `播放中：${sol}Hz + ${sch}Hz`;
-      bgStatus.className = 'status success';
-    });
+  // === 電台播放 ===
+  document.getElementById('preset').addEventListener('change',e=>{
+    if(e.target.value) document.getElementById('customUrl').value = e.target.value;
+  });
 
-    bgStop.addEventListener('click', stopBg);
-    function stopBg() {
-      if (bgSource) { bgSource.stop(); bgSource = null; }
-      bgStatus.textContent = '已停止';
-      bgStatus.className = 'status';
-    }
+  document.getElementById('radioPlay').onclick = () => {
+    let url = document.getElementById('customUrl').value.trim() || document.getElementById('preset').value;
+    if(!url){document.getElementById('mainStatus').textContent='請選擇電台';return;}
+    mainAudio.src = url;
+    mainAudio.play().then(()=>{
+      document.getElementById('mainStatus').textContent='電台播放中 ♪';
+      document.getElementById('mainStatus').className='status success';
+    }).catch(()=>{document.getElementById('mainStatus').textContent='播放失敗（可能需VPN）';document.getElementById('mainStatus').className='status error';});
+  };
 
-    // === 主音樂控制 ===
-    const customUrl = document.getElementById('customUrl');
-    const radioPlay = document.getElementById('radioPlay');
-    const radioStop = document.getElementById('radioStop');
-    const localFile = document.getElementById('localFile');
-    const localPlay = document.getElementById('localPlay');
-    const localStop = document.getElementById('localStop');
-    const mainVolume = document.getElementById('mainVolume');
-    const mainVolVal = document.getElementById('mainVolVal');
-    const mainStatus = document.getElementById('mainStatus');
+  document.getElementById('radioStop').onclick = () => {
+    mainAudio.pause(); mainAudio.src='';
+    document.getElementById('mainStatus').textContent='電台已停止';
+  };
 
-    mainVolume.addEventListener('input', e => {
-      mainVolVal.textContent = e.target.value + '%';
-      mainAudio.volume = e.target.value / 100;
-    });
+  // === 本地音樂 ===
+  document.getElementById('localPlay').onclick = () => {
+    const f = document.getElementById('localFile').files[0];
+    if(!f){document.getElementById('mainStatus').textContent='請選擇檔案';return;}
+    mainAudio.src = URL.createObjectURL(f);
+    mainAudio.play();
+    document.getElementById('mainStatus').textContent=`播放中：${f.name}`;
+    document.getElementById('mainStatus').className='status success';
+  };
 
-    // 電台播放（使用 <audio> 標籤，支援所有格式）
-    let mainAudio = new Audio();
-    mainAudio.crossOrigin = "anonymous";
+  document.getElementById('localStop').onclick = () => {
+    mainAudio.pause();
+    document.getElementById('mainStatus').textContent='已停止';
+  };
 
-    radioPlay.addEventListener('click', () => {
-      let url = customUrl.value.trim();
-      if (!url) { mainStatus.textContent = '請輸入 URL'; mainStatus.className = 'status error'; return; }
-      mainAudio.pause();
-      mainAudio.src = url;
-      mainAudio.load();
-      mainAudio.play().then(() => {
-        mainStatus.textContent = '電台播放中 ♪';
-        mainStatus.className = 'status success';
-      }).catch(e => {
-        mainStatus.textContent = '播放失敗，請檢查 URL';
-        mainStatus.className = 'status error';
-      });
-    });
-
-    radioStop.addEventListener('click', () => {
-      mainAudio.pause();
-      mainAudio.src = '';
-      mainStatus.textContent = '電台已停止';
-      mainStatus.className = 'status';
-    });
-
-    // 本地音樂
-    localPlay.addEventListener('click', () => {
-      const file = localFile.files[0];
-      if (!file) { mainStatus.textContent = '請選擇檔案'; mainStatus.className = 'status error'; return; }
-      mainAudio.pause();
-      mainAudio.src = URL.createObjectURL(file);
-      mainAudio.play();
-      mainStatus.textContent = `播放中：${file.name}`;
-      mainStatus.className = 'status success';
-    });
-
-    localStop.addEventListener('click', () => {
-      mainAudio.pause();
-      mainStatus.textContent = '本地音樂已停止';
-      mainStatus.className = 'status';
-    });
-
-    // 自動解鎖音訊
-    document.documentElement.addEventListener('touchstart', initAudio, {once: true});
-    document.documentElement.addEventListener('click', initAudio, {once: true});
-
-    // 初始化
-    applyLang('zh');
-  </script>
+  // 初始化
+  mainAudio.volume = 0.8;
+</script>
 </body>
 </html>
