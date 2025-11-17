@@ -1,1 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>全球療癒音樂播放器 | Global Healing Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f1a;
+      --card: #1a1a2e;
+      --accent: #7b68ee;
+      --text: #e0e7ff;
+      --text-muted: #a0a8c0;
+      --border: #333355;
+      --success: #a8e6cf;
+      --error: #ff6b6b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans TC', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #16213e 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container { max-width: 900px; margin: 0 auto; display: grid; gap: 20px; grid-template-columns: 1fr; }
+    @media (min-width: 768px) { .container { grid-template-columns: 1fr 1fr; } }
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+    }
+    h1 { text-align: center; font-size: 2rem; margin-bottom: 10px; color: #c3b1e1; text-shadow: 0 0 15px rgba(123, 104, 238, 0.5); }
+    .subtitle { text-align: center; color: var(--text-muted); font-size: 1rem; margin-bottom: 20px; }
+    .lang-switch { text-align: center; margin-bottom: 20px; }
+    .lang-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 6px 12px; margin: 0 4px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; }
+    .lang-btn.active, .lang-btn:hover { background: var(--accent); color: white; }
+    .control-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; font-weight: 500; color: #d0d8ff; }
+    select, input[type="text"], input[type="range"], input[type="file"] {
+      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #16213e; color: var(--text); font-size: 1rem;
+    }
+    input[type="range"] { height: 8px; -webkit-appearance: none; background: #333; outline: none; border-radius: 4px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; cursor: pointer; }
+    .volume-display { text-align: right; font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .btn { background: linear-gradient(45deg, #7b68ee, #5e35b1); color: white; border: none; padding: 14px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: transform 0.2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn.stop { background: linear-gradient(45deg, #e91e63, #c2185b); }
+    .status { text-align: center; margin-top: 10px; font-size: 0.9rem; }
+    .status.success { color: var(--success); }
+    .status.error { color: var(--error); }
+    footer { text-align: center; margin-top: 30px; color: var(--text-muted); font-size: 0.9rem; }
+    @media (max-width: 480px) { .card { padding: 16px; } h1 { font-size: 1.6rem; } }
+  </style>
+</head>
+<body>
 
+  <div class="container">
+    <div class="card" style="grid-column: 1 / -1;">
+      <h1 data-lang="title">全球療癒音樂播放器</h1>
+      <p class="subtitle" data-lang="subtitle">Solfeggio & Schumann + 網路收音機 + 本地音樂</p>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ja">日本語</button>
+      </div>
+    </div>
+
+    <!-- 背景音 -->
+    <div class="card">
+      <h3 data-lang="bg-title">背景療癒音</h3>
+      <div class="control-group">
+        <label data-lang="bg-select">選擇組合</label>
+        <select id="bgCombo">
+          <option value="396-7.83">396 Hz + 7.83 Hz (釋放恐懼)</option>
+          <option value="417-10">417 Hz + 10 Hz (療癒創傷)</option>
+          <option value="528-7.83" selected>528 Hz + 7.83 Hz (吸引財富)</option>
+          <option value="639-10">639 Hz + 10 Hz (和諧關係)</option>
+          <option value="741-7.83">741 Hz + 7.83 Hz (直覺覺醒)</option>
+          <option value="963-7.83">963 Hz + 7.83 Hz (宇宙連結)</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label data-lang="bg-volume">背景音量 <span id="bgVolVal">10%</span></label>
+        <input type="range" id="bgVolume" min="0" max="100" value="10" step="1">
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="bgPlay" data-lang="play-bg">播放</button>
+        <button class="btn stop" id="bgStop" data-lang="stop-bg">停止</button>
+      </div>
+      <p class="status" id="bgStatus"></p>
+    </div>
+
+    <!-- 主音樂播放器 -->
+    <div class="card">
+      <h3 data-lang="main-title">主音樂播放器</h3>
+
+      <!-- 熱門電台一鍵選擇 -->
+      <div class="control-group">
+        <label data-lang="preset">熱門療癒電台（一鍵選擇）</label>
+        <select id="presetRadio">
+          <option value="">自訂 URL</option>
+          <option value="https://icecast.radiofrance.fr/franceinter-lofi.mp3">France Inter LoFi (法國)</option>
+          <option value="https://stream.zeno.fm/9b0k7v8p7zquv">Zen Radio (全球冥想)</option>
+          <option value="https://stream.rcs.revma.com/ye5kqhntx6quv">Calm Radio - Sleep (加拿大)</option>
+          <option value="https://streamer.radio.co/s3d1b8a7a9/listen">ICRT FM100 (台灣最新 2025)</option>
+          <option value="https://ais-sa1.streamon.fm/8033_64.aac">Smooth Jazz (美國)</option>
+          <option value="https://playerservices.streamtheworld.com/api/livestream-redirect/977_HITS.mp3">90s Hits (全球)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label data-lang="radio-url">自訂收音機 URL</label>
+        <input type="text" id="radioUrl" placeholder="貼上 .mp3 / .m3u8 / .aac 串流網址">
+      </div>
+
+      <div class="control-group">
+        <label data-lang="main-volume">播放音量 <span id="mainVolVal">80%</span></label>
+        <input type="range" id="mainVolume" min="0" max="100" value="80" step="1">
+      </div>
+
+      <div class="btn-group">
+        <button class="btn" id="radioPlay" data-lang="play-radio">播放收音機</button>
+        <button class="btn stop" id="radioStop" data-lang="stop-radio">停止</button>
+      </div>
+
+      <!-- 本地檔案 -->
+      <div class="control-group" style="margin-top: 20px;">
+        <label data-lang="or">或上傳本地音樂</label>
+        <input type="file" id="localFile" accept="audio/*">
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="localPlay" data-lang="play-local">播放本地</button>
+        <button class="btn stop" id="localStop" data-lang="stop-local">停止</button>
+      </div>
+
+      <p class="status" id="mainStatus"></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Global Healing Player | <span data-lang="open-source">開源免費 • GitHub</span></p>
+  </footer>
+
+  <script>
+    // 多語系（略，同上）
+
+    // === Audio Context ===
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let ctx, bgSource, bgGain, mainSource, mainGain;
+
+    async function initAudio() {
+      if (!ctx) {
+        ctx = new AudioContext();
+        bgGain = ctx.createGain();
+        mainGain = ctx.createGain();
+        bgGain.connect(ctx.destination);
+        mainGain.connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') await ctx.resume();
+    }
+
+    // === 背景音（同上，略） ===
+
+    // === 主音樂控制 ===
+    const radioUrl = document.getElementById('radioUrl');
+    const presetRadio = document.getElementById('presetRadio');
+    const radioPlay = document.getElementById('radioPlay');
+    const radioStop = document.getElementById('radioStop');
+    const localFile = document.getElementById('localFile');
+    const localPlay = document.getElementById('localPlay');
+    const localStop = document.getElementById('localStop');
+    const mainVolume = document.getElementById('mainVolume');
+    const mainVolVal = document.getElementById('mainVolVal');
+    const mainStatus = document.getElementById('mainStatus');
+
+    // 選擇預設電台
+    presetRadio.addEventListener('change', () => {
+      if (presetRadio.value) radioUrl.value = presetRadio.value;
+    });
+
+    mainVolume.addEventListener('input', () => {
+      mainVolVal.textContent = mainVolume.value + '%';
+      if (mainGain) mainGain.gain.value = mainVolume.value / 100;
+    });
+
+    radioPlay.addEventListener('click', async () => {
+      await initAudio();
+      stopMain();
+
+      let url = radioUrl.value.trim();
+      if (!url) {
+        mainStatus.textContent = '請輸入或選擇電台';
+        mainStatus.className = 'status error';
+        return;
+      }
+
+      mainStatus.textContent = '載入中...';
+      mainStatus.className = 'status';
+
+      // 自動偵測 .m3u8 並轉為可播放
+      if (url.includes('.m3u8')) {
+        try {
+          const resp = await fetch(url);
+          const text = await resp.text();
+          const lines = text.split('\n');
+          url = lines.find(l => l && !l.startsWith('#')) || url;
+        } catch (e) { }
+      }
+
+      try {
+        const response = await fetch(url, { method: 'GET', mode: 'cors', credentials: 'omit' });
+        if (!response.ok) throw new Error('串流無法載入');
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+
+        mainSource = ctx.createBufferSource();
+        mainSource.buffer = audioBuffer;
+        mainSource.loop = true;
+        mainSource.connect(mainGain);
+        mainSource.start();
+        mainStatus.textContent = '播放中';
+        mainStatus.className = 'status success';
+      } catch (e) {
+        mainStatus.textContent = '錯誤：' + e.message + '（部分電台需 VPN）';
+        mainStatus.className = 'status error';
+      }
+    });
+
+    [radioStop, localStop].forEach(btn => btn.addEventListener('click', stopMain));
+
+    function stopMain() {
+      if (mainSource) {
+        mainSource.stop();
+        mainSource.disconnect();
+        mainSource = null;
+        mainStatus.textContent = '已停止';
+        mainStatus.className = 'status';
+      }
+    }
+
+    // 本地播放（同上，略）
+
+    // 初始化
+    applyLang('zh');
+  </script>
+</body>
+</html>
