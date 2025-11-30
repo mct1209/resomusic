@@ -1,219 +1,1092 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>全球療癒音樂播放器 | Global Healing Player</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#0f0f1a;--card:#1a1a2e;--accent:#8b5cf6;--text:#e0e7ff;--muted:#94a3b8;--success:#86efac;--error:#fca5a5}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Noto Sans TC','Roboto',sans-serif;background:linear-gradient(135deg,#0f0f1a,#1e1b4b);color:var(--text);min-height:100vh;padding:20px}
-    .container{max-width:960px;margin:0 auto;display:grid;gap:20px;grid-template-columns:1fr}
-    @media(min-width:768px){.container{grid-template-columns:1fr 1fr}}
-    .card{background:var(--card);border-radius:20px;padding:24px;box-shadow:0 15px 35px rgba(0,0,0,.4);border:1px solid #333}
-    h1{font-size:2.2rem;text-align:center;margin-bottom:8px;color:#ddd6fe;text-shadow:0 0 20px #8b5cf6}
-    .subtitle{text-align:center;color:var(--muted);margin-bottom:20px}
-    .lang-switch{text-align:center;margin-bottom:20px}
-    .lang-btn{background:none;border:1px solid var(--accent);color:var(--accent);padding:8px 16px;margin:0 6px;border-radius:12px;cursor:pointer;transition:.3s}
-    .lang-btn.active,.lang-btn:hover{background:var(--accent);color:#fff}
-    label{display:block;margin:16px 0 8px;font-weight:600;color:#d0d8ff}
-    select,input[type=range],input[type=text],input[type=file]{width:100%;padding:14px;border-radius:12px;background:#16213e;border:1px solid #334;color:#fff;font-size:1rem}
-    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:var(--accent);border-radius:50%;cursor:pointer}
-    .btn{display:block;width:100%;padding:16px;margin:12px 0;border:none;border-radius:12px;font-weight:700;color:#fff;cursor:pointer;transition:.2s}
-    .play{background:linear-gradient(45deg,#8b5cf6,#ec4899)}
-    .stop{background:linear-gradient(45deg,#ef4444,#dc2626)}
-    .btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(139,92,246,.4)}
-    .status{text-align:center;margin-top:12px;font-weight:600}
-    .success{color:var(--success)}
-    .error{color:var(--error)}
-    footer{text-align:center;margin-top:40px;color:var(--muted);font-size:0.9rem}
-    .preset{max-height:200px;overflow-y:auto;border:1px solid #444;border-radius:12px;padding:10px;background:#16213e}
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="title">全球療癒音樂播放器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --bg: #0a0a1a;
+            --card: #1a1a2e;
+            --accent: #8b5cf6;
+            --text: #e0e7ff;
+            --muted: #94a3b8;
+            --success: #86efac;
+            --error: #fca5a5;
+            --viz-border: #007bff
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #1e1b4b);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr
+        }
+
+        @media(min-width:768px) {
+            .container {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid #333
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: #ddd6fe;
+            text-shadow: 0 0 20px #8b5cf6
+        }
+
+        h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 20px
+        }
+
+        .lang-switch {
+            text-align: center;
+            margin-bottom: 20px
+        }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 16px;
+            margin: 0 6px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: .3s
+        }
+
+        .lang-btn.active,
+        .lang-btn:hover {
+            background: var(--accent);
+            color: #fff
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 8px;
+            font-weight: 600
+        }
+
+        select,
+        input[type=range],
+        input[type=text],
+        input[type=file] {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: #16213e;
+            border: 1px solid #334;
+            color: #fff;
+            font-size: 1rem
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: .2s
+        }
+
+        .play {
+            background: linear-gradient(45deg, #8b5cf6, #ec4899)
+        }
+
+        .stop {
+            background: linear-gradient(45deg, #ef4444, #dc2626)
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4)
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 600
+        }
+
+        .success {
+            color: var(--success)
+        }
+
+        .error {
+            color: var(--error)
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--muted);
+            font-size: 0.9rem
+        }
+        /* === 視覺化樣式 START === */
+
+        .visualization-card {
+            grid-column: 1 / -1;
+        }
+
+        .visualization-area {
+            display: flex;
+            width: 100%;
+            height: 350px;
+            /* 統一高度 */
+            margin-top: 15px;
+        }
+
+        .visualization-wrapper {
+            position: relative;
+            flex-grow: 1;
+            padding-left: 50px;
+            box-sizing: border-box;
+        }
+
+        #visualization {
+            border: 2px solid var(--viz-border);
+            background-color: #000;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .axis-label {
+            position: absolute;
+            color: var(--muted);
+            font-size: 0.8em;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .y-axis-label {
+            left: 0;
+            text-align: right;
+            width: 45px;
+            transform: translateY(-50%);
+        }
+
+        .x-axis-label {
+            bottom: -20px;
+            white-space: nowrap;
+        }
+
+        .color-map-wrapper {
+            width: 70px;
+            /* 固定寬度 */
+            margin-left: 10px;
+            padding-top: 2px;
+            position: relative;
+        }
+
+        #color-map-canvas {
+            border: 1px solid #333;
+            background-color: #000;
+            display: block;
+            height: 100%;
+            width: 30px;
+            margin-left: auto;
+        }
+
+        .color-map-title {
+            text-align: right;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 5px;
+            padding-right: 5px;
+        }
+
+        .color-map-labels {
+            position: absolute;
+            top: 0;
+            right: 35px;
+            height: 100%;
+            width: 35px;
+        }
+
+        .color-map-label {
+            position: absolute;
+            left: 0;
+            text-align: right;
+            color: var(--muted);
+            font-size: 0.8em;
+            transform: translateY(-50%);
+            width: 100%;
+        }
+
+        .freq-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-top: 1px solid #2e2e4a;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="card" style="grid-column:1/-1">
-    <h1 data-lang="title">全球療癒音樂播放器</h1>
-    <p class="subtitle" data-lang="subtitle">528Hz＋舒曼波背景音 • 全球電台 • 本地音樂</p>
-    <div class="lang-switch">
-      <button class="lang-btn active" data-lang="zh">中文</button>
-      <button class="lang-btn" data-lang="en">English</button>
-      <button class="lang-btn" data-lang="ja">日本語</button>
+    <div class="container">
+        <div class="card" style="grid-column:1/-1">
+            <h1 data-i18n="h1">全球療癒音樂播放器</h1>
+            <p class="subtitle" data-i18n="subtitle">Solfeggio frequencies + Schumann resonance</p>
+            <div class="lang-switch">
+                <button class="lang-btn active" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="en">English</button>
+                <button class="lang-btn" data-lang="ja">日本語</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>背景療癒音</h3>
+            <label data-i18n="bg-label">選擇頻率組合</label>
+            <select id="bgCombo">
+                <option value="396-7.83">396 Hz + 7.83 Hz</option>
+                <option value="417-10">417 Hz + 10 Hz</option>
+                <option value="528-7.83" selected>528 Hz + 7.83 Hz</option>
+                <option value="639-10">639 Hz + 10 Hz</option>
+                <option value="741-7.83">741 Hz + 7.83 Hz</option>
+                <option value="963-7.83">963 Hz + 7.83 Hz</option>
+            </select>
+
+            <div class="freq-info">
+                <span data-i18n="solf-carrier">Solfeggio:</span> <span id="solf-display">528 Hz</span>
+                <span data-i18n="schu-mod">Schumann:</span> <span id="schu-display">7.83 Hz</span>
+            </div>
+
+            <label data-i18n="bg-volume">背景音量</label> <span id="bgVolVal">15%</span>
+            <input type="range" id="bgVolume" min="0" max="100" value="15">
+            <button class="btn play" id="bgPlay" data-i18n="bg-play">播放背景音 (FM)</button>
+            <button class="btn stop" id="bgStop" data-i18n="bg-stop">停止背景音</button>
+            <div class="status" id="bgStatus" data-i18n="bg-status">已停止</div>
+        </div>
+
+        <div class="card">
+            <h3 data-i18n="main-h3">主音樂播放器</h3>
+
+            <label data-i18n="main-label">全球舒壓電台</label>
+            <select id="preset">
+                <option value="https://stream.radioparadise.com/mp3-320" data-i18n="radio-paradise">Radio Paradise (高音質)</option>
+                <option value="https://ice1.somafm.com/dronezone-128-mp3" data-i18n="somafm-dronezone">SomaFM Drone Zone (深層冥想)</option>
+                <option value="https://ice1.somafm.com/lush-128-mp3" data-i18n="somafm-lush">SomaFM Lush (氛圍人聲)</option>
+                <option value="https://ice1.somafm.com/deepspaceone-128-mp3" data-i18n="somafm-deepspaceone">SomaFM Deep Space One (太空環境)</option>
+                <option value="https://ice1.somafm.com/fluid-128-mp3" data-i18n="somafm-fluid">SomaFM Fluid (電子環境/Chill)</option>
+                <option value="https://ice1.somafm.com/groovesalad-128-mp3" data-i18n="somafm-groovesalad">SomaFM Groove Salad (Chillout/Groove)</option>
+                <option value="https://icecast.radiofrance.fr/fip-lofi.mp3" data-i18n="fip-lofi">FIP Lo-Fi (法國電台 Lofi) </option>
+
+            </select>
+
+            <label data-i18n="custom-url-label">自訂電台 URL（.mp3/.aac/.m3u8）</label>
+            <input type="text" id="customUrl" placeholder="可留空，直接選上面的電台即可" data-i18n-placeholder="custom-url-placeholder">
+            <p style="color:var(--error);font-size:0.85rem;margin-top:5px;">Imput URL</p>
+
+            <label data-i18n="main-volume">主音量</label> <span id="mainVolVal">80%</span>
+            <input type="range" id="mainVolume" min="0" max="100" value="80">
+
+            <button class="btn play" id="radioPlay" data-i18n="radio-play">播放電台</button>
+            <button class="btn stop" id="radioStop" data-i18n="radio-stop">停止電台</button>
+
+            <hr style="margin:20px 0;border:none;border-top:1px solid #444">
+
+            <label data-i18n="local-file-label">或播放手機/電腦本地音樂</label>
+            <input type="file" id="localFile" accept="audio/*">
+            <button class="btn play" id="localPlay" data-i18n="local-play">播放本地音樂</button>
+            <button class="btn stop" id="localStop" data-i18n="local-stop">停止</button>
+
+            <div class="status success" id="mainStatus" data-i18n="main-status-ready">準備就緒</div>
+        </div>
+
+        <div class="card visualization-card">
+            <h3 data-i18n="viz-h3">頻率聲譜視覺化</h3>
+
+            <div class="visualization-area">
+                <div class="visualization-wrapper">
+                    <canvas id="visualization"></canvas>
+                    <div id="y-axis-labels">
+                    </div>
+
+                    <div id="x-axis-labels">
+                        <div class="axis-label x-axis-label" style="right: 0;" data-i18n="viz-now">Now</div>
+                        <div class="axis-label x-axis-label" style="right: 50%; transform: translateX(50%);" data-i18n="viz-history">過去 N 秒</div>
+                    </div>
+                </div>
+
+                <div class="color-map-wrapper">
+                    <div class="color-map-title" data-i18n="viz-intensity">強度</div>
+                    <canvas id="color-map-canvas"></canvas>
+                    <div class="color-map-labels" id="color-map-labels">
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </div>
 
-  <!-- 背景音 -->
-  <div class="card">
-    <h3 data-lang="bg-title">背景療癒音（528Hz + 7.83Hz）</h3>
-    <label data-lang="bg-volume">背景音量 <span id="bgVolVal">15%</span></label>
-    <input type="range" id="bgVolume" min="0" max="100" value="15">
-    <button class="btn play" id="bgPlay" data-lang="play-bg">播放背景音</button>
-    <button class="btn stop" id="bgStop" data-lang="stop-bg">停止背景音</button>
-    <div class="status" id="bgStatus"></div>
-  </div>
+    <footer>© 2025 Global Healing Player</span>
+    </footer>
 
-  <!-- 主播放器 -->
-  <div class="card">
-    <h3 data-lang="main-title">主音樂播放器</h3>
+    <script>
+        // --- 語言包 (V7.0: 新增 SomaFM 和 Radio Paradise 翻譯) ---
+        const translations = {
+            'zh': {
+                'title': '全球療癒音樂播放器',
+                'subtitle': 'Solfeggio frequencies + Schumann resonance',
+                'bg-h3': '背景療癒音頻',
+                'bg-label': '選擇頻率組合',
+                'solf-carrier': 'Solfeggio:',
+                'schu-mod': 'Schumann:',
+                'bg-volume': '背景音量',
+                'bg-play': '播放背景音',
+                'bg-stop': '停止背景音',
+                'bg-status': '已停止',
+                'main-h3': '主音樂播放器',
+                'main-label': '全球舒壓電台',
+                'custom-url-label': '自訂電台 URL',
+                'custom-url-placeholder': '可留空，直接選上面的電台即可',
+                'main-volume': '主音量',
+                'radio-play': '播放電台',
+                'radio-stop': '停止電台',
+                'local-file-label': '或播放手機/電腦本地音樂',
+                'local-play': '播放本地音樂',
+                'local-stop': '停止',
+                'main-status-ready': '準備就緒',
+                'main-status-playing': '電台播放中 ♪',
+                'main-status-file': (name) => `播放中：${name}`,
+                'main-status-error': '播放失敗 (請檢查 URL 或網路連線)',
+                'viz-h3': '頻率聲譜視覺化',
+                'viz-intensity': '強度',
+                'viz-now': 'Now',
+                'viz-history': '過去 N 秒',
+                'footer': '© 2025 Global Healing Player',
+                // V7.0 新增
+                'radio-paradise': 'Radio Paradise (高音質)',
+                'somafm-dronezone': 'SomaFM Drone Zone (深層冥想)',
+                'somafm-lush': 'SomaFM Lush (氛圍人聲)',
+                'somafm-deepspaceone': 'SomaFM Deep Space One (太空環境)',
+                'somafm-fluid': 'SomaFM Fluid (電子環境/Chill)',
+                'somafm-groovesalad': 'SomaFM Groove Salad (Chillout/Groove)',
+                // 既有
+                'fip-lofi': 'FIP Lo-Fi (法國電台 Lofi)',
 
-    <label data-lang="preset">熱門療癒電台（點選即播）</label>
-    <select id="preset" class="preset">
-      <option value="https://ice1.somafm.com/dronezone-128-mp3">SomaFM Drone Zone</option>
-      <option value="https://ice1.somafm.com/lush-128-mp3">SomaFM Lush</option>
-      <option value="https://ice1.somafm.com/deepspaceone-128-mp3">SomaFM Deep Space One</option>
-      <option value="https://ice1.somafm.com/fluid-128-mp3">SomaFM Fluid</option>
-      <option value="https://ice1.somafm.com/groovesalad-128-mp3">SomaFM Groove Salad</option>
-      <option value="http://stream.radioparadise.com/mp3-320">Radio Paradise</option>
-    </select>
+            },
+            'en': {
+                'title': 'Global Healing Music Player',
+                'subtitle': 'Solfeggio frequencies + Schumann resonance',
+                'bg-h3': 'Background Healing Tone',
+                'bg-label': 'Select Frequency Combination',
+                'solf-carrier': 'Solfeggio:',
+                'schu-mod': 'Schumann:',
+                'bg-volume': 'Background Volume',
+                'bg-play': 'Play Background Tone',
+                'bg-stop': 'Stop Background Tone',
+                'bg-status': 'Stopped',
+                'main-h3': 'Main Music Player',
+                'main-label': 'Global Relaxing Radio',
+                'custom-url-label': 'Custom Radio URL',
+                'custom-url-placeholder': 'Leave blank to use presets',
+                'main-volume': 'Main Volume',
+                'radio-play': 'Play Radio',
+                'radio-stop': 'Stop Radio',
+                'local-file-label': 'Or Play Local Audio File',
+                'local-play': 'Play Local File',
+                'local-stop': 'Stop',
+                'main-status-ready': 'Ready',
+                'main-status-playing': 'Radio Playing ♪',
+                'main-status-file': (name) => `Playing: ${name}`,
+                'main-status-error': 'Playback Failed (Check URL or connection)',
+                'viz-h3': 'Frequency Spectrogram',
+                'viz-intensity': 'Intensity',
+                'viz-now': 'Now',
+                'viz-history': 'Past N Secs',
+                'footer': '© 2025 Global Healing Player ',
+                // V7.0 新增
+                'radio-paradise': 'Radio Paradise (HQ)',
+                'somafm-dronezone': 'SomaFM Drone Zone (Deep Meditation)',
+                'somafm-lush': 'SomaFM Lush (Ambient/Vocal)',
+                'somafm-deepspaceone': 'SomaFM Deep Space One (Space Ambient)',
+                'somafm-fluid': 'SomaFM Fluid (Electronic/Chill)',
+                'somafm-groovesalad': 'SomaFM Groove Salad (Chillout/Groove)',
+                // 既有
+                'fip-lofi': 'FIP Lo-Fi (French Radio Lofi)',
 
-    <label data-lang="custom">自訂電台 URL</label>
-    <input type="text" id="customUrl" placeholder="可貼上任何 .mp3 / .m3u8 串流">
+            },
+            'ja': {
+                'title': 'グローバルヒーリング音楽プレーヤー',
+                'subtitle': 'Solfeggio frequencies + Schumann resonance',
+                'bg-h3': 'バックグラウンドヒーリングトーン',
+                'bg-label': '周波数組み合わせの選択',
+                'solf-carrier': 'ソルフェジオ:',
+                'schu-mod': 'シューマン:',
+                'bg-volume': '背景音量',
+                'bg-play': '背景音を再生',
+                'bg-stop': '背景音を停止',
+                'bg-status': '停止中',
+                'main-h3': 'メイン音楽プレーヤー',
+                'main-label': '世界のリラックスラジオ',
+                'custom-url-label': 'カスタムラジオ URL',
+                'custom-url-placeholder': '空欄でプリセットを使用',
+                'main-volume': 'メイン音量',
+                'radio-play': 'ラジオを再生',
+                'radio-stop': 'ラジオを停止',
+                'local-file-label': 'またはローカルオーディオファイルを再生',
+                'local-play': 'ローカルファイルを再生',
+                'local-stop': '停止',
+                'main-status-ready': '準備完了',
+                'main-status-playing': 'ラジオ再生中 ♪',
+                'main-status-file': (name) => `再生中: ${name}`,
+                'main-status-error': '再生失敗 (URL または接続を確認)',
+                'viz-h3': '周波数スペクトログラム ',
+                'viz-intensity': '強度',
+                'viz-now': 'Now',
+                'viz-history': '過去 N 秒',
+                'footer': '© 2025 Global Healing Player',
+                // V7.0 新增
+                'radio-paradise': 'Radio Paradise (高音質)',
+                'somafm-dronezone': 'SomaFM Drone Zone (深層瞑想)',
+                'somafm-lush': 'SomaFM Lush (雰囲気/ボーカル)',
+                'somafm-deepspaceone': 'SomaFM Deep Space One (スペースアンビエント)',
+                'somafm-fluid': 'SomaFM Fluid (電子音楽/チル)',
+                'somafm-groovesalad': 'SomaFM Groove Salad (チルアウト/グルーヴ)',
+                // 既有
+                'fip-lofi': 'FIP Lo-Fi (フランスラジオ Lofi)',
 
-    <label data-lang="main-volume">主音量 <span id="mainVolVal">80%</span></label>
-    <input type="range" id="mainVolume" min="0" max="100" value="80">
+            }
+        };
 
-    <button class="btn play" id="radioPlay" data-lang="play-radio">播放電台</button>
-    <button class="btn stop" id="radioStop" data-lang="stop-radio">停止電台</button>
+        let currentLang = 'zh';
 
-    <hr style="margin:20px 0;border:none;border-top:1px solid #444">
+        // --- 語言切換邏輯 (略) ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                let translation = translations[lang][key];
 
-    <label data-lang="local">或播放本地音樂</label>
-    <input type="file" id="localFile" accept="audio/*">
-    <button class="btn play" id="localPlay" data-lang="play-local">播放本地音樂</button>
-    <button class="btn stop" id="localStop" data-lang="stop-local">停止</button>
+                if (typeof translation === 'function') {
+                    if (key === 'main-status-file' && (el.textContent.includes('：') || el.textContent.includes(':'))) {
+                        const parts = el.textContent.includes('：') ? el.textContent.split('：') : el.textContent.split(':');
+                        const fileName = parts.length > 1 ? parts[1].trim() : '';
+                        translation = translation(fileName);
+                    } else {
+                        return;
+                    }
+                }
 
-    <div class="status success" id="mainStatus" data-lang="ready">準備就緒</div>
-  </div>
-</div>
-<!-- 三語免責聲明 -->
-<div class="disclaimer" style="max-width:960px;margin:30px auto 0;">
-  <p><br>本站僅提供公開網路電台串流連結，所有音頻內容由原電台伺服器直接提供，本站不儲存、不轉發、不重製任何音頻檔案，與直接在瀏覽器輸入網址播放無異。</p>
-  <p><br>This site only provides publicly available radio stream links. All audio is streamed directly from the original stations. We do not host, cache, or redistribute any audio files.</p>
-  <p><br>本サイトは公開されているインターネットラジオのストリーミングリンクのみを提供します。すべての音声は元の放送局から直接配信されており、当サイトは音声を保存・転送・複製しておりません。</p>
-</div>
+                if (translation) {
+                    el.innerHTML = translation;
+                }
+            });
 
-<script>
-  // === 多語系 ===
-  const lang = {
-    zh: {title:"全球療癒音樂播放器",subtitle:"528Hz＋舒曼波背景音 • 全球電台 • 本地音樂", "bg-title":"背景療癒音（528Hz + 7.83Hz）",
-         "bg-volume":"背景音量","play-bg":"播放背景音","stop-bg":"停止背景音",
-         "main-title":"主音樂播放器","preset":"熱門療癒電台（點選即播）","custom":"自訂電台 URL","main-volume":"主音量",
-         "play-radio":"播放電台","stop-radio":"停止電台","local":"或播放本地音樂","play-local":"播放本地音樂","stop-local":"停止","ready":"準備就緒"},
-    en: {title:"Global Healing Player",subtitle:"528Hz + Schumann • Global Radio • Local Music", "bg-title":"Background Healing Tone (528Hz + 7.83Hz)",
-         "bg-volume":"Background Volume","play-bg":"Play Background","stop-bg":"Stop Background",
-         "main-title":"Main Player","preset":"Popular Healing Stations","custom":"Custom Radio URL","main-volume":"Main Volume",
-         "play-radio":"Play Radio","stop-radio":"Stop Radio","local":"or Play Local Music","play-local":"Play Local","stop-local":"Stop","ready":"Ready"},
-    ja: {title:"グローバル癒しプレーヤー",subtitle:"528Hz＋シューマン波 • 世界のラジオ • ローカル音楽", "bg-title":"背景ヒーリング音（528Hz + 7.83Hz）",
-         "bg-volume":"背景音量","play-bg":"背景音再生","stop-bg":"背景音停止",
-         "main-title":"メインプレーヤー","preset":"人気癒しラジオ","custom":"カスタムURL","main-volume":"音量",
-         "play-radio":"ラジオ再生","stop-radio":"ラジオ停止","local":"またはローカル音楽","play-local":"ローカル再生","stop-local":"停止","ready":"準備完了"}
-  };
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                const translation = translations[lang][key];
+                if (translation) {
+                    el.placeholder = translation;
+                }
+            });
 
-  document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('.lang-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    const l = lang[b.dataset.lang];
-    document.querySelectorAll('[data-lang]').forEach(el=>{
-      const key = el.dataset.lang;
-      if(l[key]) el.textContent = l[key];
-    });
-  }));
+            document.title = translations[lang]['title'];
 
-  // === Audio Context + 原生 audio ===
-  let ctx, bgSource, bgGain;
-  const bgAudio = new Audio();
-  const mainAudio = new Audio();
+            document.querySelectorAll('#preset option').forEach(option => {
+                const key = option.getAttribute('data-i18n');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
 
-  async function unlock() {
-    if(!ctx){
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
-      bgGain = ctx.createGain();
-      bgGain.connect(ctx.destination);
-    }
-    if(ctx.state==='suspended') await ctx.resume();
-  }
-  document.addEventListener('touchstart',unlock,{once:true});
-  document.addEventListener('click',unlock,{once:true});
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
 
-  // === 背景音（528 + 7.83）===
-  document.getElementById('bgVolume').addEventListener('input',e=>{
-    document.getElementById('bgVolVal').textContent = e.target.value+'%';
-    if(bgGain) bgGain.gain.value = e.target.value/100 * 0.4;
-  });
+            updateFrequencyRange();
+            updateXAxisLabel();
+            drawColorMap();
+        }
 
-  document.getElementById('bgPlay').onclick = async () => {
-    await unlock();
-    if(bgSource) bgSource.stop();
 
-    const duration = 600;
-    const buffer = ctx.createBuffer(2, ctx.sampleRate*duration, ctx.sampleRate);
-    const left = buffer.getChannelData(0);
-    const right = buffer.getChannelData(1);
-    for(let i=0;i<buffer.length;i++){
-      const t = i/ctx.sampleRate;
-      left[i]  = Math.sin(2*Math.PI*528*t)*0.1;
-      right[i] = Math.sin(2*Math.PI*7.83*t)*0.1;
-    }
-    bgSource = ctx.createBufferSource();
-    bgSource.buffer = buffer;
-    bgSource.loop = true;
-    bgSource.connect(bgGain);
-    bgSource.start();
-    document.getElementById('bgStatus').textContent = '528Hz + 7.83Hz 播放中';
-    document.getElementById('bgStatus').className = 'status success';
-  };
+        // --- 全域變數/設置 (略) ---
+        const FREQUENCY_MAP = {
+            "396-7.83": {
+                solf: 396,
+                schu: 7.83
+            },
+            "417-10": {
+                solf: 417,
+                schu: 10
+            },
+            "528-7.83": {
+                solf: 528,
+                schu: 7.83
+            },
+            "639-10": {
+                solf: 639,
+                schu: 10
+            },
+            "741-7.83": {
+                solf: 741,
+                schu: 7.83
+            },
+            "963-7.83": {
+                solf: 963,
+                schu: 7.83
+            }
+        };
 
-  document.getElementById('bgStop').onclick = () => {
-    if(bgSource){bgSource.stop();bgSource=null;}
-    document.getElementById('bgStatus').textContent = '已停止';
-    document.getElementById('bgStatus').className = 'status';
-  };
+        let ctx = null; // AudioContext
+        let bgSource = null;
+        let lfoOscillator = null;
+        let bgGain = null;
+        let mainGain = null;
+        let analyser = null;
+        let mainSource = null;
 
-  // === 主音量 ===
-  document.getElementById('mainVolume').addEventListener('input',e=>{
-    document.getElementById('mainVolVal').textContent = e.target.value+'%';
-    mainAudio.volume = e.target.value/100;
-  });
+        let isPlaying = false;
+        let visualizerInterval = null;
+        let isBgPlaying = false;
 
-  // === 電台播放 ===
-  document.getElementById('preset').addEventListener('change',e=>{
-    if(e.target.value) document.getElementById('customUrl').value = e.target.value;
-  });
+        // 視覺化參數
+        const FFT_SIZE = 32768;
+        const DRAW_INTERVAL_MS = 100;
+        const DEFAULT_SAMPLE_RATE = 44100;
+        const MAX_INTENSITY = 255;
+        const FIXED_MIN_FREQ = 250;
+        const FIXED_MAX_FREQ = 1000;
 
-  document.getElementById('radioPlay').onclick = () => {
-    let url = document.getElementById('customUrl').value.trim() || document.getElementById('preset').value;
-    if(!url){document.getElementById('mainStatus').textContent='請選擇電台';return;}
-    mainAudio.src = url;
-    mainAudio.play().then(()=>{
-      document.getElementById('mainStatus').textContent='電台播放中 ♪';
-      document.getElementById('mainStatus').className='status success';
-    }).catch(()=>{document.getElementById('mainStatus').textContent='播放失敗（可能需VPN）';document.getElementById('mainStatus').className='status error';});
-  };
+        let currentSolfFreq = 528;
+        let currentSchuFreq = 7.83;
+        let displayMinFreq = FIXED_MIN_FREQ;
+        let displayMaxFreq = FIXED_MAX_FREQ;
 
-  document.getElementById('radioStop').onclick = () => {
-    mainAudio.pause(); mainAudio.src='';
-    document.getElementById('mainStatus').textContent='電台已停止';
-  };
+        let dynamicMax = 128;
+        const MAX_DECAY = 0.95;
+        const MIN_INTENSITY_FLOOR = 50;
 
-  // === 本地音樂 ===
-  document.getElementById('localPlay').onclick = () => {
-    const f = document.getElementById('localFile').files[0];
-    if(!f){document.getElementById('mainStatus').textContent='請選擇檔案';return;}
-    mainAudio.src = URL.createObjectURL(f);
-    mainAudio.play();
-    document.getElementById('mainStatus').textContent=`播放中：${f.name}`;
-    document.getElementById('mainStatus').className='status success';
-  };
+        let dataArray;
 
-  document.getElementById('localStop').onclick = () => {
-    mainAudio.pause();
-    document.getElementById('mainStatus').textContent='已停止';
-  };
+        // DOM 元素 (略)
+        const bgCombo = document.getElementById('bgCombo');
+        const bgVolumeSlider = document.getElementById('bgVolume');
+        const bgVolVal = document.getElementById('bgVolVal');
+        const bgPlayBtn = document.getElementById('bgPlay');
+        const bgStopBtn = document.getElementById('bgStop');
+        const bgStatusEl = document.getElementById('bgStatus');
+        const solfDisplay = document.getElementById('solf-display');
+        const schuDisplay = document.getElementById('schu-display');
 
-  // 初始化
-  mainAudio.volume = 0.8;
-</script>
+        const canvas = document.getElementById('visualization');
+        const canvasCtx = canvas.getContext('2d');
+        const colorMapCanvas = document.getElementById('color-map-canvas');
+        const colorMapCtx = colorMapCanvas.getContext('2d');
+        const wrapper = document.querySelector('.visualization-wrapper');
+        const yAxisLabelsContainer = document.getElementById('y-axis-labels');
+        const colorMapLabelsContainer = document.getElementById('color-map-labels');
+        const xAxisLabelMid = document.querySelector('#x-axis-labels .axis-label:nth-child(2)');
+
+        // Audio Context 初始化及節點創建
+        async function initAudio() {
+            if (!ctx) {
+                ctx = new(window.AudioContext || window.webkitAudioContext)();
+
+                bgGain = ctx.createGain();
+                mainGain = ctx.createGain();
+
+                analyser = ctx.createAnalyser();
+                analyser.fftSize = FFT_SIZE;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                bgGain.connect(analyser);
+                analyser.connect(ctx.destination);
+                mainGain.connect(analyser);
+            }
+            if (ctx.state === 'suspended') await ctx.resume();
+        }
+
+        // --- 顏色映射函數 (略) ---
+        function getColor(value) {
+            let normalized = Math.min(MAX_INTENSITY, Math.max(0, value * MAX_INTENSITY / dynamicMax));
+
+            if (value === 0 || normalized < 1) return `rgb(0,0,0)`;
+
+            let r = 0,
+                g = 0,
+                b = 0;
+            const h = normalized / 255.0;
+
+            if (h < 0.25) {
+                r = 0;
+                g = Math.floor(h * 4 * 255);
+                b = 255;
+            } else if (h < 0.5) {
+                r = 0;
+                g = 255;
+                b = Math.floor((0.5 - h) * 4 * 255);
+            } else if (h < 0.75) {
+                r = Math.floor((h - 0.5) * 4 * 255);
+                g = 255;
+                b = 0;
+            } else {
+                r = 255;
+                g = Math.floor((1.0 - h) * 4 * 255);
+                b = 0;
+            }
+
+            return `rgb(${Math.min(255, r)}, ${Math.min(255, g)}, ${Math.min(255, b)})`;
+        }
+
+
+        // --- 頻譜圖 Y 軸標籤與範圍計算 (V7.1: 優化標籤生成邏輯，確保 $50 \text{ Hz}$ 間隔) ---
+        function updateFrequencyRange() {
+            displayMinFreq = FIXED_MIN_FREQ;
+            displayMaxFreq = FIXED_MAX_FREQ;
+            const range = displayMaxFreq - displayMinFreq;
+
+            yAxisLabelsContainer.innerHTML = '';
+
+            const labelStep = 50;
+
+            // 1. 確保最大值標籤 (1000 Hz)
+            // 這是 100% 的位置
+            addYAxisLabel(displayMaxFreq, `${Math.round(displayMaxFreq)} Hz`, yAxisLabelsContainer);
+
+            // 2. 生成中間的標籤 (從最大值往下, 以 50 Hz 間隔)
+            for (let freq = displayMaxFreq - labelStep; freq > displayMinFreq; freq -= labelStep) {
+                // 檢查是否為 50 的倍數，並確保在範圍內
+                if (freq % labelStep === 0 && freq >= displayMinFreq && freq <= displayMaxFreq) {
+                    addYAxisLabel(freq, `${Math.round(freq)} Hz`, yAxisLabelsContainer);
+                }
+            }
+
+            // 3. 確保最小值標籤 (250 Hz)
+            // 這是 0% 的位置
+            addYAxisLabel(displayMinFreq, `${Math.round(displayMinFreq)} Hz`, yAxisLabelsContainer);
+        }
+
+        function addYAxisLabel(freqValue, text, container) {
+            const range = displayMaxFreq - displayMinFreq;
+            // 計算頻率在顯示範圍內的比例 (0.0 ~ 1.0)
+            const normalizedFreq = (freqValue - displayMinFreq) / range;
+            // 轉換為 Top 位置 (1.0 變 0%, 0.0 變 100%)
+            const topPosition = (1 - normalizedFreq) * 100;
+
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'axis-label y-axis-label';
+            labelDiv.style.top = `${Math.max(0, Math.min(100, topPosition))}%`;
+            labelDiv.textContent = text;
+
+            container.appendChild(labelDiv);
+        }
+
+        // --- 強度比對圖繪製 (略) ---
+        function drawColorMap() {
+            const mapHeight = colorMapCanvas.height;
+            const mapWidth = colorMapCanvas.width;
+
+            for (let i = 0; i < mapHeight; i++) {
+                const value = MAX_INTENSITY * (1 - i / mapHeight);
+                colorMapCtx.fillStyle = getColor(value);
+                colorMapCtx.fillRect(0, i, mapWidth, 1);
+            }
+
+            colorMapLabelsContainer.innerHTML = '';
+            const intensityLabels = [MAX_INTENSITY, Math.round(MAX_INTENSITY * 0.75), Math.round(MAX_INTENSITY * 0.5), Math.round(MAX_INTENSITY * 0.25), 0];
+
+            intensityLabels.forEach(label => {
+                const normalizedPosition = 1 - (label / MAX_INTENSITY);
+                const topPosition = normalizedPosition * 100;
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'axis-label color-map-label';
+                labelDiv.style.top = `${topPosition}%`;
+                labelDiv.textContent = `${label}`;
+
+                colorMapLabelsContainer.appendChild(labelDiv);
+            });
+        }
+
+        // --- 頻譜圖繪製邏輯 (略) ---
+        function drawVisualizer() {
+            if (!isPlaying && !isBgPlaying) return;
+
+            if (analyser.numberOfOutputs === 0) {
+                analyser.connect(ctx.destination);
+            }
+
+            analyser.getByteFrequencyData(dataArray);
+
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+
+            const freqPerBin = DEFAULT_SAMPLE_RATE / FFT_SIZE;
+
+            const minBin = Math.floor(displayMinFreq / freqPerBin);
+            const maxBin = Math.ceil(displayMaxFreq / freqPerBin);
+            const displayBins = maxBin - minBin;
+
+            if (displayBins <= 0 || minBin >= dataArray.length) return;
+
+            // 1. 動態強度峰值調整
+            let currentMax = 0;
+            for (let i = minBin; i < Math.min(maxBin, dataArray.length); i++) {
+                currentMax = Math.max(currentMax, dataArray[i]);
+            }
+            dynamicMax = Math.max(MIN_INTENSITY_FLOOR, dynamicMax * MAX_DECAY, currentMax * 1.1);
+
+            // 2. 滾動效果
+            const imageData = canvasCtx.getImageData(1, 0, canvasWidth - 1, canvasHeight);
+            canvasCtx.putImageData(imageData, 0, 0);
+
+            // 3. 在最右側繪製新的垂直頻譜條
+            const barWidth = 1;
+            const x = canvasWidth - barWidth;
+            const barHeightUnit = canvasHeight / displayBins;
+
+            for (let i = 0; i < displayBins; i++) {
+                const dataIndex = minBin + i;
+                if (dataIndex >= dataArray.length) break;
+
+                const value = dataArray[dataIndex];
+                const y = canvasHeight - ((i + 1) * barHeightUnit);
+
+                canvasCtx.fillStyle = getColor(value);
+                canvasCtx.fillRect(x, y, barWidth, barHeightUnit);
+            }
+        }
+
+        // --- 尺寸設置 (RWD) (略) ---
+        function setCanvasDimensions() {
+            canvas.width = wrapper.clientWidth - 50;
+            canvas.height = wrapper.clientHeight;
+            colorMapCanvas.height = canvas.height;
+
+            updateXAxisLabel();
+            drawColorMap();
+
+            if (!isPlaying && !isBgPlaying) {
+                canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function updateXAxisLabel() {
+            const totalHistorySeconds = (canvas.width * DRAW_INTERVAL_MS) / 1000;
+            if (xAxisLabelMid) {
+                const langKey = 'viz-history';
+                let text = translations[currentLang][langKey] || translations['zh'][langKey];
+                text = text.replace('N', totalHistorySeconds.toFixed(1));
+                xAxisLabelMid.textContent = text;
+            }
+        }
+
+        // --- 背景音 (FM) 邏輯 (略) ---
+        async function startBackgroundTone() {
+            await initAudio();
+
+            if (bgSource) stopBackgroundTone(false);
+
+            const [solf, schu] = bgCombo.value.split('-').map(Number);
+
+            currentSolfFreq = solf;
+            currentSchuFreq = schu;
+
+            if (!isPlaying) {
+                canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+                canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                dynamicMax = 128;
+            }
+
+            bgSource = ctx.createOscillator();
+            bgSource.type = 'sine';
+            bgSource.frequency.setValueAtTime(solf, ctx.currentTime);
+
+            lfoOscillator = ctx.createOscillator();
+            lfoOscillator.type = 'sine';
+            lfoOscillator.frequency.setValueAtTime(schu, ctx.currentTime);
+
+            const deltaF = schu / 2.0;
+
+            const fmGain = ctx.createGain();
+            fmGain.gain.setValueAtTime(deltaF, ctx.currentTime);
+            lfoOscillator.connect(fmGain);
+
+            fmGain.connect(bgSource.frequency);
+            bgSource.connect(bgGain);
+
+            bgSource.start();
+            lfoOscillator.start();
+
+            isBgPlaying = true;
+
+            if (!visualizerInterval) {
+                visualizerInterval = setInterval(drawVisualizer, DRAW_INTERVAL_MS);
+            }
+
+            bgStatusEl.textContent = `${translations[currentLang]['bg-play'].replace('播放', '播放中')} (${solf}Hz ± ${deltaF.toFixed(3)}Hz)`;
+            bgStatusEl.className = 'status success';
+            updateFrequencyRange();
+        }
+
+        function stopBackgroundTone(clearVisual = true) {
+            if (bgSource) {
+                bgSource.stop();
+                bgSource.disconnect();
+                bgSource = null;
+            }
+            if (lfoOscillator) {
+                lfoOscillator.stop();
+                lfoOscillator.disconnect();
+                lfoOscillator = null;
+            }
+
+            isBgPlaying = false;
+
+            if (!isPlaying) {
+                if (visualizerInterval) {
+                    clearInterval(visualizerInterval);
+                    visualizerInterval = null;
+                }
+                if (clearVisual) {
+                    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+                    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                    dynamicMax = 128;
+                }
+            }
+
+            bgStatusEl.textContent = translations[currentLang]['bg-status'];
+            bgStatusEl.className = 'status';
+        }
+
+        // --- 事件監聽器 (略) ---
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLanguage(btn.getAttribute('data-lang'));
+            });
+        });
+
+        bgVolumeSlider.addEventListener('input', e => {
+            const value = e.target.value / 100 * 0.4;
+            bgVolVal.textContent = e.target.value + '%';
+            if (bgGain) bgGain.gain.setValueAtTime(value, ctx.currentTime);
+        });
+
+        bgCombo.addEventListener('change', () => {
+            const selected = FREQUENCY_MAP[bgCombo.value];
+            solfDisplay.textContent = `${selected.solf} Hz`;
+            schuDisplay.textContent = `${selected.schu} Hz`;
+
+            currentSolfFreq = selected.solf;
+            currentSchuFreq = selected.schu;
+
+            updateFrequencyRange();
+
+            if (isBgPlaying) {
+                startBackgroundTone();
+            }
+        });
+
+        bgPlayBtn.onclick = startBackgroundTone;
+        bgStopBtn.onclick = () => stopBackgroundTone(false);
+
+
+        // --- 主音樂播放器邏輯 ---
+        let audioElement = new Audio();
+        audioElement.crossOrigin = "anonymous";
+        audioElement.autoplay = false;
+
+        // 音訊元素狀態監聽 (略)
+        audioElement.addEventListener('play', () => {
+            isPlaying = true;
+            if (!visualizerInterval) {
+                visualizerInterval = setInterval(drawVisualizer, DRAW_INTERVAL_MS);
+            }
+        });
+        audioElement.addEventListener('pause', () => {
+            isPlaying = false;
+            if (!isBgPlaying) {
+                if (visualizerInterval) {
+                    clearInterval(visualizerInterval);
+                    visualizerInterval = null;
+                }
+            }
+        });
+
+        audioElement.addEventListener('canplay', async() => {
+            await initAudio();
+            if (!audioElement.src) return;
+
+            if (!mainSource || mainSource.mediaElement !== audioElement) {
+                if (mainSource) mainSource.disconnect();
+                mainSource = ctx.createMediaElementSource(audioElement);
+                mainSource.connect(mainGain);
+            }
+        }, {
+            once: true
+        });
+
+        // 更新狀態的邏輯 (略)
+        const updateMainStatus = (msg, success = true, isFile = false) => {
+            const el = document.getElementById('mainStatus');
+            let text = msg;
+
+            if (msg.includes('電台播放中') || msg.includes('Radio Playing') || msg.includes('ラジオ再生中')) {
+                text = translations[currentLang]['main-status-playing'];
+            } else if (isFile) {
+                const parts = msg.includes('：') ? msg.split('：') : msg.split(':');
+                const fileName = parts.length > 1 ? parts[1].trim() : '';
+                text = translations[currentLang]['main-status-file'](fileName);
+            } else if (msg.includes('已停止') || msg.includes('Stopped')) {
+                text = translations[currentLang]['radio-stop'].replace('停止', '已停止') || translations[currentLang]['main-status-ready'];
+            } else if (msg.includes('準備就緒') || msg.includes('Ready')) {
+                text = translations[currentLang]['main-status-ready'];
+            }
+
+            el.innerHTML = text;
+            el.className = 'status ' + (success ? 'success' : 'error');
+        };
+
+        const playStream = async(url) => {
+            await initAudio();
+
+            audioElement.pause();
+            audioElement.src = url;
+            audioElement.load();
+
+            if (audioElement.readyState >= 2 && (!mainSource || mainSource.mediaElement !== audioElement)) {
+                if (mainSource) mainSource.disconnect();
+                mainSource = ctx.createMediaElementSource(audioElement);
+                mainSource.connect(mainGain);
+            }
+
+            audioElement.play().then(() => {
+                updateMainStatus('電台播放中 ♪');
+            }).catch(e => {
+                updateMainStatus(translations[currentLang]['main-status-error'], false);
+                console.error("Audio Playback Error:", e);
+                alert(`播放失敗：${e.name} (${e.message})。請檢查電台 URL 是否為 **HTTPS** 協定，或是否過期。`);
+            });
+        };
+
+        document.getElementById('preset').addEventListener('change', e => {
+            document.getElementById('customUrl').value = e.target.value;
+        });
+
+        document.getElementById('radioPlay').onclick = () => {
+            let url = document.getElementById('customUrl').value.trim();
+            if (!url) url = document.getElementById('preset').value;
+            if (!url) {
+                updateMainStatus('請選擇或輸入電台', false);
+                return;
+            }
+            playStream(url);
+        };
+
+        document.getElementById('radioStop').onclick = () => {
+            audioElement.pause();
+            audioElement.src = '';
+            updateMainStatus(translations[currentLang]['radio-stop'].replace('停止', '已停止'));
+        };
+
+        document.getElementById('mainVolume').addEventListener('input', e => {
+            document.getElementById('mainVolVal').textContent = e.target.value + '%';
+            if (mainGain) mainGain.gain.setValueAtTime(e.target.value / 100, ctx.currentTime);
+        });
+
+        // 本地音樂 (略)
+        document.getElementById('localPlay').onclick = async() => {
+            const file = document.getElementById('localFile').files[0];
+            if (!file) {
+                updateMainStatus(translations[currentLang]['main-status-error'].replace('播放失敗', '請先選擇檔案'), false);
+                return;
+            }
+            await initAudio();
+
+            audioElement.pause();
+            audioElement.src = URL.createObjectURL(file);
+            audioElement.play();
+            updateMainStatus(`播放中：${file.name}`, true, true);
+        };
+
+        document.getElementById('localStop').onclick = () => {
+            audioElement.pause();
+            audioElement.src = '';
+            updateMainStatus(translations[currentLang]['local-stop'].replace('停止', '已停止'));
+        };
+
+        // --- 啟動時的初始化 (略) ---
+        document.documentElement.addEventListener('touchstart', initAudio, {
+            once: true
+        });
+        document.documentElement.addEventListener('click', initAudio, {
+            once: true
+        });
+
+        window.addEventListener('load', () => {
+            setLanguage('zh');
+
+            setCanvasDimensions();
+            bgVolumeSlider.dispatchEvent(new Event('input'));
+            document.getElementById('mainVolume').dispatchEvent(new Event('input'));
+            bgCombo.dispatchEvent(new Event('change'));
+            canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+            canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        window.addEventListener('resize', setCanvasDimensions);
+    </script>
 </body>
+
 </html>
